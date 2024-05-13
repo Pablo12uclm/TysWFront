@@ -1,0 +1,40 @@
+.board {
+    display: flex;
+    flex-direction: column;
+    width: fit-content;
+    margin: auto;
+  }
+  
+  .board-row {
+    display: flex;
+  }
+  
+  .board-cell {
+    width: 50px;
+    height: 50px;
+    border: 1px solid #333;
+    background-color: #ffcc00;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    position: relative;
+  }
+  
+  .token {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #fff;
+    position: absolute;
+    box-shadow: inset 0 0 5px #000;
+  }
+  
+  .playerR {
+    background-color: red;
+  }
+  
+  .playerY {
+    background-color: yellow;
+  }
+  
