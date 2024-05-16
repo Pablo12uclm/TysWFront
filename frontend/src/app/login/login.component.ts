@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { UserService } from '../user.service';
 
 @Component({
@@ -14,33 +13,31 @@ export class LoginComponent {
     password: new FormControl('', [Validators.required, Validators.minLength(6)])
   });
 
-  loginValido: boolean = false;
+  successMessage: string | null = null;
+  errorMessage: string | null = null;
 
-  constructor(private userService: UserService, private router: Router) { }
+  constructor(private userService: UserService) {}
 
-  onSubmit() {
-    console.log(this.loginForm.value);
+  login() {
     if (this.loginForm.valid) {
-      this.userService.loginUsuario({
-        email: this.loginForm.value.email!,
-        password: this.loginForm.value.password!
-      }).subscribe({
-        next: (response) => {
-          console.log('Login exitoso:', response);
-          this.loginValido = true;
+      const email = this.loginForm.get('email')?.value ?? '';
+      const password = this.loginForm.get('password')?.value ?? '';
+
+      this.userService.login(email, password).subscribe(
+        response => {
+          console.log('User logged in successfully', response);
+          this.successMessage = response.message;
+          this.errorMessage = null;
+          this.loginForm.reset();
         },
-        error: (error) => {
-          console.error('Error iniciando sesión', error);
+        error => {
+          console.error('Error logging in user', error);
+          this.errorMessage = error.error.message || 'An error occurred';
+          this.successMessage = null;
         }
-      });
+      );
+    } else {
+      this.errorMessage = 'Form is invalid';
     }
-  }
-
-  onRegister() {
-    this.router.navigate(['/register']);
-  }
-
-  onInvitado() {
-    this.router.navigate(['/board']);
   }
 }

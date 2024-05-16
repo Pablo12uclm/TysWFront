@@ -1,47 +1,50 @@
 import { Component } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { UserService } from '../user.service';
-import { User } from '../user/user';
+
 @Component({
   selector: 'app-register',
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.css']
 })
 export class RegisterComponent {
-  // Crear un FormGroup para el formulario de registro
   registerForm = new FormGroup({
-    nombre: new FormControl('', [Validators.required, Validators.minLength(2)]),
+    username: new FormControl('', [Validators.required, Validators.minLength(2)]),
     email: new FormControl('', [Validators.required, Validators.email]),
     password: new FormControl('', [Validators.required, Validators.minLength(6)]),
     confirmPassword: new FormControl('', [Validators.required])
   });
 
-  constructor(private userService: UserService, private router: Router) { }
+  successMessage: string | null = null;
+  errorMessage: string | null = null;
 
-  onSubmit() {
-    console.log(this.registerForm.value)
-    if (this.registerForm.valid && this.registerForm.value.password === this.registerForm.value.confirmPassword) {
-      const newUser = new User(
-        this.registerForm.value.nombre!,
-        this.registerForm.value.email!,
-        this.registerForm.value.password!,
-        this.registerForm.value.confirmPassword!
-      );
+  constructor(private userService: UserService) {}
 
-      this.userService.registrarUsuario(newUser).subscribe({
-        next: (response) => {
-          console.log('Usuario registrado con éxito:', response);
-          this.router.navigate(['/login']);
-        },
-        error: (error) => {
-          console.error('Error durante el registro:', error);
-        }
-      });
-    } else {
-      if (this.registerForm.value.password !== this.registerForm.value.confirmPassword) {
-        console.error('Las contraseñas no coinciden');
+  register() {
+    if (this.registerForm.valid) {
+      const { username, email, password, confirmPassword } = this.registerForm.value;
+
+      if (password !== confirmPassword) {
+        this.errorMessage = 'Passwords do not match';
+        return;
       }
+
+      const user = { username, email, password };
+      this.userService.register(user).subscribe(
+        response => {
+          console.log('User registered successfully', response);
+          this.successMessage = response.message;
+          this.errorMessage = null;
+          this.registerForm.reset();
+        },
+        error => {
+          console.error('Error registering user', error);
+          this.errorMessage = error.error.message || 'An error occurred';
+          this.successMessage = null;
+        }
+      );
+    } else {
+      this.errorMessage = 'Form is invalid';
     }
   }
 }
