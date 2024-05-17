@@ -26,4 +26,13 @@
   <div *ngIf="errorMessage" class="error-message">
     {{ errorMessage }}
   </div>
+  
+  <p>Don't have an account? <a routerLink="/register">Register here</a></p>
+
+  <div *ngIf="currentUser">
+    <h3>Current User</h3>
+    <p>Username: {{ currentUser.username }}</p>
+    <p>Email: {{ currentUser.email }}</p>
+    <button (click)="logout()">Logout</button>
+  </div>
 </div>

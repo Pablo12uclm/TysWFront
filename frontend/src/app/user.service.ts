@@ -18,6 +18,14 @@ export class UserService {
     return this.http.post(`${this.apiUrl}/login`, { email, password });
   }
 
+  logout(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/logout`);
+  }
+
+  getCurrentUser(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/current`);
+  }
+
   getUserById(id: number): Observable<any> {
     return this.http.get(`${this.apiUrl}/${id}`);
   }

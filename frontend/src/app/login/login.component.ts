@@ -15,6 +15,7 @@ export class LoginComponent {
 
   successMessage: string | null = null;
   errorMessage: string | null = null;
+  currentUser: any = null;
 
   constructor(private userService: UserService) {}
 
@@ -28,6 +29,7 @@ export class LoginComponent {
           console.log('User logged in successfully', response);
           this.successMessage = response.message;
           this.errorMessage = null;
+          this.currentUser = response.data;
           this.loginForm.reset();
         },
         error => {
@@ -39,5 +41,35 @@ export class LoginComponent {
     } else {
       this.errorMessage = 'Form is invalid';
     }
+  }
+
+  logout() {
+    this.userService.logout().subscribe(
+      response => {
+        console.log('User logged out successfully', response);
+        this.successMessage = response.message;
+        this.errorMessage = null;
+        this.currentUser = null;
+      },
+      error => {
+        console.error('Error logging out user', error);
+        this.errorMessage = error.error.message || 'An error occurred';
+        this.successMessage = null;
+      }
+    );
+  }
+
+  getCurrentUser() {
+    this.userService.getCurrentUser().subscribe(
+      response => {
+        this.currentUser = response.data;
+        console.log('Current user:', this.currentUser);
+      },
+      error => {
+        console.error('Error getting current user', error);
+        this.errorMessage = error.error.message || 'An error occurred';
+        this.successMessage = null;
+      }
+    );
   }
 }
