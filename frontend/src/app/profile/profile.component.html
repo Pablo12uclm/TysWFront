@@ -1,0 +1,15 @@
+<div class="profile-container" *ngIf="currentUser">
+  <h3>Current User</h3>
+  <p>Username: {{ currentUser.username }}</p>
+  <p>Email: {{ currentUser.email }}</p>
+  <button (click)="logout()" class="logout">Logout</button>
+
+  <div *ngIf="successMessage" class="success-message">
+    {{ successMessage }}
+  </div>
+  <div *ngIf="errorMessage" class="error-message">
+    {{ errorMessage }}
+  </div>
+
+  <button (click)="navigateToGames()">Back to Games</button>
+</div>

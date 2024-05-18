@@ -8,9 +8,8 @@ import { RegisterComponent } from './register/register.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { BoardComponent } from './board/board.component';
-import { GameComponent } from './game/game.component';
-
-
+import { ProfileComponent } from './profile/profile.component';
+import { GamesComponent } from './games/games.component';
 
 
 @NgModule({
@@ -19,7 +18,8 @@ import { GameComponent } from './game/game.component';
     LoginComponent,
     RegisterComponent,
     BoardComponent,
-    GameComponent,
+    ProfileComponent,
+    GamesComponent,
 
   ],
   imports: [

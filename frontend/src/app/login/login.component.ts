@@ -1,13 +1,14 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { UserService } from '../user.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
   loginForm = new FormGroup({
     email: new FormControl('', [Validators.required, Validators.email]),
     password: new FormControl('', [Validators.required, Validators.minLength(6)])
@@ -15,9 +16,21 @@ export class LoginComponent {
 
   successMessage: string | null = null;
   errorMessage: string | null = null;
-  currentUser: any = null;
 
-  constructor(private userService: UserService) {}
+  constructor(private userService: UserService, private router: Router) {}
+
+  ngOnInit(): void {
+    this.userService.getCurrentUser().subscribe(
+      response => {
+        if (response.data) {
+          this.router.navigate(['/games']);
+        }
+      },
+      error => {
+        // Ignorar errores, permitir al usuario continuar con el login
+      }
+    );
+  }
 
   login() {
     if (this.loginForm.valid) {
@@ -29,8 +42,8 @@ export class LoginComponent {
           console.log('User logged in successfully', response);
           this.successMessage = response.message;
           this.errorMessage = null;
-          this.currentUser = response.data;
           this.loginForm.reset();
+          this.router.navigate(['/games']); // Redirigir a la página de juegos después del login
         },
         error => {
           console.error('Error logging in user', error);
@@ -42,34 +55,16 @@ export class LoginComponent {
       this.errorMessage = 'Form is invalid';
     }
   }
-
-  logout() {
-    this.userService.logout().subscribe(
-      response => {
-        console.log('User logged out successfully', response);
-        this.successMessage = response.message;
-        this.errorMessage = null;
-        this.currentUser = null;
-      },
-      error => {
-        console.error('Error logging out user', error);
-        this.errorMessage = error.error.message || 'An error occurred';
-        this.successMessage = null;
-      }
-    );
-  }
-
-  getCurrentUser() {
-    this.userService.getCurrentUser().subscribe(
-      response => {
-        this.currentUser = response.data;
-        console.log('Current user:', this.currentUser);
-      },
-      error => {
-        console.error('Error getting current user', error);
-        this.errorMessage = error.error.message || 'An error occurred';
-        this.successMessage = null;
-      }
-    );
-  }
 }
+
+
+
+/*
+<div *ngIf="currentUser">
+<h3>Current User</h3>
+<p>Username: {{ currentUser.username }}</p>
+<p>Email: {{ currentUser.email }}</p>
+<button (click)="logout()">Logout</button>
+</div>
+*/
+
