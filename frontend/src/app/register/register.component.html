@@ -35,7 +35,7 @@
         <small>Passwords do not match.</small>
       </div>
     </div>
-    <button type="submit" [disabled]="registerForm.invalid">Register</button>
+    <button type="submit" [disabled]="registerForm.invalid || !passwordsMatch()">Register</button>
   </form>
 
   <div *ngIf="successMessage" class="success-message">

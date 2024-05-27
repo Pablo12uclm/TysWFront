@@ -10,6 +10,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { BoardComponent } from './board/board.component';
 import { ProfileComponent } from './profile/profile.component';
 import { GamesComponent } from './games/games.component';
+import { WebsocketService } from './websocket.service';
 
 
 @NgModule({
@@ -28,7 +29,7 @@ import { GamesComponent } from './games/games.component';
     ReactiveFormsModule,
     HttpClientModule,
   ],
-  providers: [],
+  providers: [WebsocketService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

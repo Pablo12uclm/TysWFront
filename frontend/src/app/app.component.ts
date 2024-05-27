@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { WebSocketService } from './websocket.service';
+import { WebsocketService } from './websocket.service';
 
 @Component({
   selector: 'app-root',
@@ -10,10 +10,10 @@ export class AppComponent implements OnInit {
   title = 'WebSocket Test';
   messages: any[] = [];
 
-  constructor(private wsService: WebSocketService) {}
+  constructor(private wsService: WebsocketService) {}
 
   ngOnInit() {
-    this.wsService.messages$.subscribe(
+    this.wsService.getMessages().subscribe(
       (msg: any) => {
         this.messages.push(msg);
       },

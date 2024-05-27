@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { WebSocketService } from '../websocket.service';
+import { GamesService } from '../games.service';
+import { WebsocketService } from '../websocket.service';
 
 @Component({
   selector: 'app-game',
@@ -7,15 +8,51 @@ import { WebSocketService } from '../websocket.service';
   styleUrls: ['./game.component.css']
 })
 export class GameComponent implements OnInit {
+  board: string[][] = Array.from({ length: 6 }, () => Array(7).fill(null));
+  currentPlayer: string = 'R';
 
-  constructor(private webSocketService: WebSocketService) { }
+  constructor(private gameService: GamesService, private websocketService: WebsocketService) { }
 
-  ngOnInit(): void {
-    // Puedes llamar a connectWebSocket aquí para iniciar la conexión al cargar el componente
-    this.connectWebSocket();
+  ngOnInit() {
+    // Conectar WebSocket para recibir actualizaciones del servidor
+    this.websocketService.getMessages().subscribe(msg => {
+      console.log('Response from websocket: ', msg);
+      switch (msg.status) {
+        case 'win':
+          alert(`Player ${msg.player} wins!`);
+          break;
+        case 'tie':
+          alert('The game is a tie!');
+          break;
+        case 'invalid':
+          alert('Invalid move!');
+          break;
+        case 'continue':
+          this.updateBoard(msg.move);
+          break;
+        default:
+          break;
+      }
+    });
+
+    // Iniciar el juego
+    this.gameService.startGame().subscribe(response => {
+      console.log(response);
+    });
   }
 
-  connectWebSocket(): void {
-    this.webSocketService.sendMessage({ message: "Hello Server!" });
+  sendMove(row: number, col: number) {
+    const move = { row, col, player: this.currentPlayer };
+    this.gameService.makeMove(row, col, this.currentPlayer).subscribe(response => {
+      console.log(response);
+      // Cambiar de jugador después de un movimiento válido
+      this.currentPlayer = this.currentPlayer === 'R' ? 'Y' : 'R';
+    });
+  }
+
+  updateBoard(move: any) {
+    this.board[move.row][move.col] = move.player;
   }
 }
+
+

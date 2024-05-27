@@ -1,39 +1,22 @@
 import { Injectable } from '@angular/core';
-import { WebSocketSubject, webSocket } from 'rxjs/webSocket';
-import { Observable } from 'rxjs';
-import { share } from 'rxjs/operators';
+import { WebSocketSubject } from 'rxjs/webSocket';
 
 @Injectable({
   providedIn: 'root'
 })
-export class WebSocketService {
-  private socket!: WebSocketSubject<any>;
-  public messages$!: Observable<any>;
+export class WebsocketService {
+  private socket$: WebSocketSubject<any>;
 
   constructor() {
-    this.connect();
+    this.socket$ = new WebSocketSubject('ws://localhost:8080/ws');
   }
 
-  public connect(): void {
-    if (!this.socket || this.socket.closed) {
-      this.socket = webSocket({
-        url: 'ws://localhost:8080/ws',
-        deserializer: (e: MessageEvent) => JSON.parse(e.data) // Parse JSON
-      });
-
-      this.messages$ = this.socket.pipe(
-        share()
-      );
-
-      this.socket.subscribe(
-        msg => console.log('message received: ', msg), // Log messages received
-        err => console.error('error: ', err), // Log errors
-        () => console.log('complete') // Log completion
-      );
-    }
+  getMessages() {
+    return this.socket$;
   }
 
-  public sendMessage(msg: any): void {
-    this.socket.next(msg);
+  sendMessage(msg: any) {
+    this.socket$.next(msg);
   }
 }
+

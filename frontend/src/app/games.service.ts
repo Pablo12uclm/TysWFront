@@ -6,14 +6,16 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class GamesService {
-  private apiUrl = 'http://localhost:8080/api/games';
+  private baseUrl = 'http://localhost:8080/connect4';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
-  playMatch(gameName: string): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/play?gameName=${gameName}`, {
-      withCredentials: true,
-      observe: 'response'
-    });
+  startGame(): Observable<string> {
+    return this.http.post<string>(`${this.baseUrl}/start`, {});
+  }
+
+  makeMove(row: number, col: number, player: string): Observable<string> {
+    return this.http.post<string>(`${this.baseUrl}/move`, { row, col, player });
   }
 }
+

@@ -10,7 +10,7 @@ import { Router } from '@angular/router';
 })
 export class RegisterComponent implements OnInit {
   registerForm = new FormGroup({
-    nombre: new FormControl('', [Validators.required, Validators.minLength(2)]),
+    username: new FormControl('', [Validators.required, Validators.minLength(2)]),
     email: new FormControl('', [Validators.required, Validators.email]),
     password: new FormControl('', [Validators.required, Validators.minLength(6)]),
     confirmPassword: new FormControl('', [Validators.required])
@@ -35,9 +35,9 @@ export class RegisterComponent implements OnInit {
   }
 
   register() {
-    if (this.registerForm.valid) {
+    if (this.registerForm.valid && this.passwordsMatch()) {
       const email = this.registerForm.get('email')?.value ?? '';
-      const username = this.registerForm.get('nombre')?.value ?? '';
+      const username = this.registerForm.get('username')?.value ?? '';
       const password = this.registerForm.get('password')?.value ?? '';
 
       this.userService.register({ email, username, password }).subscribe(
@@ -55,7 +55,11 @@ export class RegisterComponent implements OnInit {
         }
       );
     } else {
-      this.errorMessage = 'Form is invalid';
+      this.errorMessage = 'Form is invalid or passwords do not match';
     }
+  }
+
+  passwordsMatch(): boolean {
+    return this.registerForm.get('password')?.value === this.registerForm.get('confirmPassword')?.value;
   }
 }
