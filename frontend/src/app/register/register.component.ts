@@ -23,13 +23,18 @@ export class RegisterComponent implements OnInit {
 
   ngOnInit(): void {
     this.userService.getCurrentUser().subscribe(
-      response => {
-        if (response.data) {
+      user => {
+        if (user) {
           this.router.navigate(['/games']);
         }
       },
       error => {
-        // Ignorar errores, permitir al usuario continuar con el registro
+        if (error.status === 401) {
+          // Ignorar el error 401
+          console.log('No user is currently authenticated.');
+        } else {
+          console.error('Error getting current user:', error);
+        }
       }
     );
   }

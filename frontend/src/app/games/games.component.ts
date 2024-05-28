@@ -14,6 +14,10 @@ export class GamesComponent {
     this.router.navigate(['/profile']);
   }
 
+  navigateToConnect4() {
+    this.router.navigate(['/connect4']);
+  }
+  
   startGame(game: string) {
     console.log(`${game} game selected`);
     // Implement game start logic here

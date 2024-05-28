@@ -5,12 +5,15 @@ import { LoginComponent } from './login/login.component';
 import { ProfileComponent } from './profile/profile.component';
 import { GamesComponent } from './games/games.component';
 import { AuthGuard } from './auth.guard';
+import { GameComponent } from './game/game.component';
 
 const routes: Routes = [
   { path: 'register', component: RegisterComponent },
   { path: 'login', component: LoginComponent },
   { path: 'profile', component: ProfileComponent, canActivate: [AuthGuard] },
   { path: 'games', component: GamesComponent, canActivate: [AuthGuard] },
+  { path: 'connect4', component: GameComponent, canActivate: [AuthGuard] },
+
   { path: '', redirectTo: '/login', pathMatch: 'full' } // Redirigir a login por defecto
 ];
 

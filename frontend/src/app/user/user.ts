@@ -1,15 +1,10 @@
 export class User {
-    nombre: string;
-    email: string;
-    password: string;
-    confirmPassword: string;
-  
-    constructor(nombre: string, email: string, password: string, confirmPassword: string) {
-      this.nombre = nombre;
-      this.email = email;
-      this.password = password;
-      this.confirmPassword = confirmPassword;
-    }
+  constructor(
+    public username: string,
+    public email: string,
+    public password: string,
+    public confirmPassword?: string
+  ) {}
   
 
     /*passwordsMatch(): boolean {

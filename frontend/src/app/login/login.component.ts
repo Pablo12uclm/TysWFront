@@ -21,13 +21,18 @@ export class LoginComponent implements OnInit {
 
   ngOnInit(): void {
     this.userService.getCurrentUser().subscribe(
-      response => {
-        if (response.data) {
+      user => {
+        if (user) {
           this.router.navigate(['/games']);
         }
       },
       error => {
-        // Ignorar errores, permitir al usuario continuar con el login
+        if (error.status === 401) {
+          // Ignorar el error 401
+          console.log('No user is currently authenticated.');
+        } else {
+          console.error('Error getting current user:', error);
+        }
       }
     );
   }
@@ -56,15 +61,3 @@ export class LoginComponent implements OnInit {
     }
   }
 }
-
-
-
-/*
-<div *ngIf="currentUser">
-<h3>Current User</h3>
-<p>Username: {{ currentUser.username }}</p>
-<p>Email: {{ currentUser.email }}</p>
-<button (click)="logout()">Logout</button>
-</div>
-*/
-

@@ -1,6 +1,8 @@
+// src/app/game/game.component.ts
 import { Component, OnInit } from '@angular/core';
-import { GamesService } from '../games.service';
-import { WebsocketService } from '../websocket.service';
+import { Connect4Service } from '../connect4.service';
+import { UserService } from '../user.service';
+import { User } from '../user/user';
 
 @Component({
   selector: 'app-game',
@@ -8,51 +10,64 @@ import { WebsocketService } from '../websocket.service';
   styleUrls: ['./game.component.css']
 })
 export class GameComponent implements OnInit {
-  board: string[][] = Array.from({ length: 6 }, () => Array(7).fill(null));
-  currentPlayer: string = 'R';
+  board: string[][] = [];
+  currentPlayer: string = 'player1';
+  message: string = '';
+  currentUser?: User;
 
-  constructor(private gameService: GamesService, private websocketService: WebsocketService) { }
+  constructor(private connect4Service: Connect4Service, private userService: UserService) {}
 
   ngOnInit() {
-    // Conectar WebSocket para recibir actualizaciones del servidor
-    this.websocketService.getMessages().subscribe(msg => {
-      console.log('Response from websocket: ', msg);
-      switch (msg.status) {
-        case 'win':
-          alert(`Player ${msg.player} wins!`);
-          break;
-        case 'tie':
-          alert('The game is a tie!');
-          break;
-        case 'invalid':
-          alert('Invalid move!');
-          break;
-        case 'continue':
-          this.updateBoard(msg.move);
-          break;
-        default:
-          break;
+    this.userService.getCurrentUser().subscribe(
+      user => {
+        this.currentUser = user;
+        console.log('Current user:', this.currentUser);
+
+        this.connect4Service.startGame().subscribe(
+          response => {
+            this.message = response.message;
+          },
+          error => {
+            console.error('Error starting game:', error);
+          }
+        );
+
+        if (this.currentUser) {
+          this.connect4Service.joinGame(this.currentUser).subscribe(
+            response => {
+              this.message = 'Game started! Player 1 vs Player 2';
+            },
+            error => {
+              if (error.error.message === 'Waiting for another player to join.') {
+                this.message = 'Waiting for another player to join...';
+              } else {
+                console.error('Error joining game:', error);
+              }
+            }
+          );
+        }
+      },
+      error => {
+        console.error('Error getting current user:', error);
       }
-    });
-
-    // Iniciar el juego
-    this.gameService.startGame().subscribe(response => {
-      console.log(response);
-    });
+    );
   }
 
-  sendMove(row: number, col: number) {
-    const move = { row, col, player: this.currentPlayer };
-    this.gameService.makeMove(row, col, this.currentPlayer).subscribe(response => {
-      console.log(response);
-      // Cambiar de jugador después de un movimiento válido
-      this.currentPlayer = this.currentPlayer === 'R' ? 'Y' : 'R';
-    });
-  }
-
-  updateBoard(move: any) {
-    this.board[move.row][move.col] = move.player;
+  makeMove(row: number, col: number) {
+    this.connect4Service.makeMove(row, col, this.currentPlayer).subscribe(
+      response => {
+        this.board = response.board;
+        if (response.status === 'win') {
+          this.message = `${this.currentPlayer} wins!`;
+        } else if (response.status === 'tie') {
+          this.message = 'It\'s a tie!';
+        } else {
+          this.currentPlayer = this.currentPlayer === 'player1' ? 'player2' : 'player1';
+        }
+      },
+      error => {
+        console.error('Error making move:', error);
+      }
+    );
   }
 }
-
-

@@ -11,6 +11,7 @@ import { BoardComponent } from './board/board.component';
 import { ProfileComponent } from './profile/profile.component';
 import { GamesComponent } from './games/games.component';
 import { WebsocketService } from './websocket.service';
+import { GameComponent } from './game/game.component';
 
 
 @NgModule({
@@ -21,6 +22,7 @@ import { WebsocketService } from './websocket.service';
     BoardComponent,
     ProfileComponent,
     GamesComponent,
+    GameComponent,
 
   ],
   imports: [

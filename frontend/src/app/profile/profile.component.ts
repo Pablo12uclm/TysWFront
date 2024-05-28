@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { UserService } from '../user.service';
 import { Router } from '@angular/router';
+import { User } from '../user/user';
 
 @Component({
   selector: 'app-profile',
@@ -8,7 +9,7 @@ import { Router } from '@angular/router';
   styleUrls: ['./profile.component.css']
 })
 export class ProfileComponent implements OnInit {
-  currentUser: any = null;
+  currentUser: User | null = null;
   successMessage: string | null = null;
   errorMessage: string | null = null;
 
@@ -20,8 +21,8 @@ export class ProfileComponent implements OnInit {
 
   getCurrentUser() {
     this.userService.getCurrentUser().subscribe(
-      response => {
-        this.currentUser = response.data;
+      user => {
+        this.currentUser = user;
         console.log('Current user:', this.currentUser);
       },
       error => {
