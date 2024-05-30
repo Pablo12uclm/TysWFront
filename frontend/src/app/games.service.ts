@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class GamesService {
-  private baseUrl = 'http://localhost:8080/connect4';
+  private baseUrl = 'http://localhost:8080//connect4';
 
   constructor(private http: HttpClient) { }
 

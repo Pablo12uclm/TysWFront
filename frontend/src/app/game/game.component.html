@@ -1,13 +1,15 @@
-<!-- game.component.html -->
 <div>
-    <h1>Connect4</h1>
-    <div *ngIf="message">{{ message }}</div>
-    <div class="board">
-      <div *ngFor="let row of board; let rowIndex = index" class="row">
-        <div *ngFor="let cell of row; let colIndex = index" class="cell" (click)="makeMove(rowIndex, colIndex)">
-          {{ cell }}
-        </div>
+  <h1>Connect4</h1>
+  <div *ngIf="message">{{ message }}</div>
+  <div class="board" *ngIf="!gameOver">
+    <div class="column" *ngFor="let col of board[0]; let colIndex = index" (click)="handleColumnClick(colIndex)">
+      <div class="cell" *ngFor="let row of board; let rowIndex = index">
+        <div *ngIf="board[rowIndex][colIndex]" class="piece" [ngClass]="board[rowIndex][colIndex]"></div>
       </div>
     </div>
   </div>
-  
+  <div *ngIf="gameOver" class="game-over">
+    <h2>{{ endMessage }}</h2>
+    <button (click)="backToGames()">Volver a los juegos</button>
+  </div>
+</div>

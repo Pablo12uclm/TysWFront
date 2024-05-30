@@ -13,13 +13,7 @@ export class AppComponent implements OnInit {
   constructor(private wsService: WebsocketService) {}
 
   ngOnInit() {
-    this.wsService.getMessages().subscribe(
-      (msg: any) => {
-        this.messages.push(msg);
-      },
-      (err: any) => console.error(err),
-      () => console.log('complete')
-    );
+
   }
 
   sendMessage() {
